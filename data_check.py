@@ -39,8 +39,6 @@ def main() -> None:
     imbalance_ratio = target_table["count"].max() / target_table["count"].min()
 
     lines = [
-        "KIỂM TRA DỮ LIỆU - NGƯỜI 2, NGÀY 1",
-        "=" * 50,
         f"Tệp dữ liệu: {INPUT_FILE.name}",
         f"Số dòng: {len(df):,}",
         f"Số cột: {df.shape[1]}",
