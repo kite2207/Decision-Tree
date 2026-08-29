@@ -103,9 +103,212 @@ Xây dựng mô hình cây quyết định để dự đoán khách hàng có th
 | Weekend | bool | Phiên truy cập vào cuối tuần? |
 | **Revenue** | **bool** | **[TARGET] Có thực hiện giao dịch không?** |
 
-### Các bước tiền xử lý
+### Các bước tiền xử lý 
+*chạy file ```pre.py```*
 
-[Phần này sẽ được Người 1 và Người 2 điền sau khi xử lý dữ liệu]
+### 1. Kiểm tra dữ liệu
+
+Bộ dữ liệu ban đầu gồm **12.330 mẫu với 18 thuộc tính**. Trong đó có **17 thuộc tính đầu vào** được sử dụng để dự đoán và một thuộc tính mục tiêu là `Revenue`.
+
+Trước tiên, nhóm kiểm tra các giá trị bị thiếu trong toàn bộ bộ dữ liệu. Kết quả cho thấy **không có giá trị bị thiếu** ở bất kỳ thuộc tính nào.
+
+### 2. Xử lý dữ liệu trùng lặp
+
+Tiếp theo, nhóm kiểm tra các bản ghi bị trùng lặp hoàn toàn. Kết quả phát hiện **125 bản ghi trùng lặp**.
+
+Các bản ghi trùng lặp được loại bỏ nhằm tránh việc cùng một quan sát xuất hiện nhiều lần và tạo ảnh hưởng không cần thiết đến quá trình huấn luyện mô hình.
+
+Sau khi loại bỏ 125 bản ghi trùng lặp, bộ dữ liệu còn lại **12.205 mẫu**.
+
+| Nội dung | Số lượng |
+|---|---:|
+| Số mẫu ban đầu | 12.330 |
+| Số bản ghi trùng lặp | 125 |
+| Số mẫu sau khi loại bỏ trùng lặp | 12.205 |
+| Giá trị thiếu | 0 |
+
+### 3. Xác định biến đầu vào và biến mục tiêu
+
+Trong bài toán này, biến mục tiêu được chọn là `Revenue`. Biến này biểu thị việc một phiên truy cập website có phát sinh giao dịch mua hàng hay không.
+
+Giá trị của `Revenue` được chuyển đổi thành dạng nhị phân:
+
+- `0`: Không phát sinh giao dịch (`False`)
+- `1`: Có phát sinh giao dịch (`True`)
+
+17 thuộc tính còn lại được sử dụng làm các biến đầu vào cho mô hình Decision Tree.
+
+Như vậy, bài toán được xác định là **bài toán phân loại nhị phân (Binary Classification)**.
+
+### 4. Phân loại các thuộc tính
+
+Các thuộc tính đầu vào được chia thành ba nhóm dựa trên ý nghĩa và kiểu dữ liệu.
+
+### Các thuộc tính số (Numerical Features)
+
+- `Administrative`
+- `Administrative_Duration`
+- `Informational`
+- `Informational_Duration`
+- `ProductRelated`
+- `ProductRelated_Duration`
+- `BounceRates`
+- `ExitRates`
+- `PageValues`
+- `SpecialDay`
+
+Có tổng cộng **10 thuộc tính số**.
+
+### Các thuộc tính phân loại (Categorical Features)
+
+- `Month`
+- `OperatingSystems`
+- `Browser`
+- `Region`
+- `TrafficType`
+- `VisitorType`
+
+Có tổng cộng **6 thuộc tính phân loại**.
+
+### Thuộc tính nhị phân (Binary Feature)
+
+- `Weekend`
+
+Mặc dù các thuộc tính `OperatingSystems`, `Browser`, `Region` và `TrafficType` được biểu diễn bằng các giá trị số trong bộ dữ liệu ban đầu, các giá trị này thực chất là mã đại diện cho các nhóm khác nhau. Do đó, chúng được xem là thuộc tính phân loại thay vì thuộc tính số liên tục.
+
+### 5. Phân tích phân bố biến mục tiêu
+
+Nhóm kiểm tra phân bố của biến `Revenue` để xác định mức độ cân bằng giữa hai lớp.
+
+| `Revenue` | Ý nghĩa | Số mẫu | Tỷ lệ |
+|---|---|---:|---:|
+| 0 | Không mua hàng | 10.297 | 84,37% |
+| 1 | Có mua hàng | 1.908 | 15,63% |
+| **Tổng** | | **12.205** | **100%** |
+
+Kết quả cho thấy bộ dữ liệu có **mất cân bằng lớp (Class Imbalance)**. Số phiên truy cập không phát sinh giao dịch chiếm 84,37%, trong khi các phiên có phát sinh giao dịch chỉ chiếm 15,63%.
+
+Điều này cần được lưu ý khi đánh giá mô hình. Nếu chỉ sử dụng Accuracy, mô hình có thể đạt độ chính xác tương đối cao ngay cả khi khả năng nhận diện lớp `Purchase` không tốt. Vì vậy, ngoài Accuracy, nhóm sẽ sử dụng thêm **Precision, Recall, F1-score và Confusion Matrix** để đánh giá mô hình.
+
+### 6. Chia tập huấn luyện và tập kiểm tra
+
+Sau khi loại bỏ các bản ghi trùng lặp và xác định biến đầu vào và biến mục tiêu, dữ liệu được chia thành hai tập:
+
+- **80% dữ liệu cho tập huấn luyện**
+- **20% dữ liệu cho tập kiểm tra**
+
+Kết quả:
+
+| Tập dữ liệu | Số mẫu |
+|---|---:|
+| Tập huấn luyện | 9.764 |
+| Tập kiểm tra | 2.441 |
+| **Tổng** | **12.205** |
+
+Nhóm sử dụng `random_state = 42` để đảm bảo quá trình chia dữ liệu có thể tái lập trong các lần chạy khác nhau.
+
+Do dữ liệu bị mất cân bằng lớp, phương pháp **stratified splitting** được sử dụng dựa trên biến `Revenue`. Phương pháp này giúp duy trì tỷ lệ giữa hai lớp trong cả tập huấn luyện và tập kiểm tra.
+
+Kết quả phân bố:
+
+| Tập | Không mua | Có mua |
+|---|---:|---:|
+| Training | 84,37% | 15,63% |
+| Testing | 84,35% | 15,65% |
+
+Có thể thấy phân bố của hai lớp trong tập huấn luyện và tập kiểm tra gần như tương đương với phân bố của toàn bộ dữ liệu.
+
+### 7. Mã hóa các thuộc tính phân loại
+
+Mô hình Decision Tree được sử dụng trong thư viện Scikit-learn yêu cầu dữ liệu đầu vào ở dạng số. Do đó, sáu thuộc tính phân loại được chuyển đổi bằng phương pháp **One-Hot Encoding**.
+
+Ví dụ, thuộc tính `VisitorType` có thể nhận các giá trị:
+
+- `New_Visitor`
+- `Returning_Visitor`
+- `Other`
+
+Sau khi mã hóa, các giá trị này được biểu diễn bằng các thuộc tính nhị phân riêng biệt.
+
+Tương tự, One-Hot Encoding được áp dụng cho:
+
+- `Month`
+- `OperatingSystems`
+- `Browser`
+- `Region`
+- `TrafficType`
+- `VisitorType`
+
+Phương pháp này được sử dụng thay vì gán trực tiếp các giá trị số cho từng category, vì các category không có quan hệ thứ tự tự nhiên.
+
+Bộ dữ liệu ban đầu có **17 thuộc tính đầu vào**. Sau khi thực hiện One-Hot Encoding, số lượng thuộc tính đầu vào tăng lên **73 thuộc tính**. Sự gia tăng này là do một thuộc tính phân loại được tách thành nhiều thuộc tính nhị phân tương ứng với các giá trị khác nhau của nó.
+### 8. Kết quả sau tiền xử lý
+
+Sau khi hoàn thành quá trình tiền xử lý, dữ liệu có các đặc điểm sau:
+
+| Thành phần | Kết quả |
+|---|---:|
+| Số mẫu ban đầu | 12.330 |
+| Bản ghi trùng lặp đã loại bỏ | 125 |
+| Số mẫu cuối cùng | 12.205 |
+| Số thuộc tính đầu vào ban đầu | 17 |
+| Số thuộc tính sau One-Hot Encoding | 73 |
+| Tập huấn luyện | 9.764 |
+| Tập kiểm tra | 2.441 |
+| Giá trị thiếu | 0 |
+| Chuẩn hóa | Không thực hiện |
+| Mã hóa biến phân loại | One-Hot Encoding |
+| Mã hóa `Revenue` | 0 = Không mua, 1 = Có mua |
+| Tỷ lệ chia dữ liệu | 80% / 20% |
+| Stratified Split | Có |
+
+### Quy trình tiền xử lý
+
+```text
+Dữ liệu ban đầu
+12.330 mẫu × 18 thuộc tính
+          │
+          ▼
+    Kiểm tra dữ liệu
+          │
+          ▼
+    Không có giá trị thiếu
+          │
+          ▼
+   Loại bỏ 125 bản ghi trùng
+          │
+          ▼
+    12.205 mẫu
+          │
+          ▼
+   Xác định X và y
+          │
+          ├── X: 17 thuộc tính
+          │
+          └── y: Revenue
+                  0 = Không mua
+                  1 = Có mua
+          │
+          ▼
+   Chia dữ liệu 80/20
+          │
+       ┌──┴──┐
+       ▼     ▼
+    Train   Test
+    9.764   2.441
+       │     │
+       ▼     ▼
+   One-Hot Encoding
+          │
+          ▼
+   73 thuộc tính đầu vào
+          │
+          ▼
+   Sẵn sàng xây dựng
+   Decision Tree
+```
+
+Sau bước tiền xử lý, dữ liệu đã ở dạng phù hợp để tiến hành xây dựng **mô hình Decision Tree cơ sở (Baseline Decision Tree)** và thực hiện các thí nghiệm cải thiện mô hình ở các bước tiếp theo.
 
 ---
 
