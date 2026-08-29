@@ -1,0 +1,58 @@
+KIỂM TRA DỮ LIỆU - NGƯỜI 2, NGÀY 1
+==================================================
+Tệp dữ liệu: online_shoppers_intention.csv
+Số dòng: 12,330
+Số cột: 18
+Cột mục tiêu: Revenue
+
+1. KIỂU DỮ LIỆU TỪNG CỘT
+--------------------------------------------------
+Administrative: int64
+Administrative_Duration: float64
+Informational: int64
+Informational_Duration: float64
+ProductRelated: int64
+ProductRelated_Duration: float64
+BounceRates: float64
+ExitRates: float64
+PageValues: float64
+SpecialDay: float64
+Month: str
+OperatingSystems: int64
+Browser: int64
+Region: int64
+TrafficType: int64
+VisitorType: str
+Weekend: bool
+Revenue: bool
+
+2. PHÂN NHÓM CỘT
+--------------------------------------------------
+Cột số (14): Administrative, Administrative_Duration, Informational, Informational_Duration, ProductRelated, ProductRelated_Duration, BounceRates, ExitRates, PageValues, SpecialDay, OperatingSystems, Browser, Region, TrafficType
+Cột chữ (2): Month, VisitorType
+Cột boolean (2): Weekend, Revenue
+
+Lưu ý về ý nghĩa: OperatingSystems, Browser, Region và TrafficType được lưu bằng số nhưng là mã phân loại, không phải đại lượng liên tục.
+
+3. GIÁ TRỊ THIẾU VÀ DÒNG TRÙNG
+--------------------------------------------------
+Tổng số ô trống: 0
+Số dòng trùng hoàn toàn: 125
+Số dòng còn lại nếu loại trùng: 12,205
+
+4. PHÂN BỐ CỘT KẾT QUẢ REVENUE (DỮ LIỆU GỐC)
+--------------------------------------------------
+No Purchase: 10,422 dòng (84.53%)
+Purchase: 1,908 dòng (15.47%)
+
+5. CÁC VẤN ĐỀ CẦN XỬ LÝ/LƯU Ý
+--------------------------------------------------
+- Có 125 dòng trùng hoàn toàn; nên loại trước khi chia dữ liệu.
+- Không có ô trống.
+- Hai lớp bị mất cân bằng (lớp lớn gấp khoảng 5.46 lần lớp nhỏ); không nên chỉ dựa vào accuracy.
+- Cột chữ cần mã hóa: Month, VisitorType.
+- Các cột mã phân loại dạng số cần mã hóa phù hợp: OperatingSystems, Browser, Region, TrafficType.
+- Weekend và Revenue là boolean; cần chuyển thành 0/1 khi mô hình yêu cầu.
+- Khi chia train/test nên dùng stratify=Revenue để giữ tỷ lệ hai lớp.
+
+Bảng phân bố lớp đã lưu tại: target_distribution.csv

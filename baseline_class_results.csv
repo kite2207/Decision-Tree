@@ -1,0 +1,3 @@
+class,label,actual_count,correct,wrong,correct_percentage,wrong_percentage
+0,No Purchase,2059,1870,189,90.82,9.18
+1,Purchase,382,219,163,57.33,42.67

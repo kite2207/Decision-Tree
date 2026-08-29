@@ -1,0 +1,39 @@
+KẾT QUẢ ĐÁNH GIÁ CÂY QUYẾT ĐỊNH BASELINE
+============================================================
+Dữ liệu: online_shoppers_preprocessed.csv
+Mô hình: DecisionTreeClassifier(random_state=42)
+Số mẫu huấn luyện: 9,764
+Số mẫu kiểm tra: 2,441
+Số đặc trưng: 73
+
+KẾT QUẢ TỔNG QUÁT
+------------------------------------------------------------
+Số dự đoán đúng: 2,089/2,441
+Số dự đoán sai: 352/2,441
+Accuracy (tỷ lệ đúng): 0.8558 (85.58%)
+Error rate (tỷ lệ sai): 0.1442 (14.42%)
+
+BẢNG ĐÚNG/SAI THEO TỪNG NHÓM KẾT QUẢ
+------------------------------------------------------------
+No Purchase  | tổng 2059 | đúng 1870 ( 90.82%) | sai  189 (  9.18%)
+Purchase     | tổng  382 | đúng  219 ( 57.33%) | sai  163 ( 42.67%)
+
+CONFUSION MATRIX
+------------------------------------------------------------
+Hàng = nhãn thực tế; cột = nhãn dự đoán
+[[1870  189]
+ [ 163  219]]
+
+CLASSIFICATION REPORT
+------------------------------------------------------------
+              precision    recall  f1-score   support
+
+ No Purchase     0.9198    0.9082    0.9140      2059
+    Purchase     0.5368    0.5733    0.5544       382
+
+    accuracy                         0.8558      2441
+   macro avg     0.7283    0.7408    0.7342      2441
+weighted avg     0.8599    0.8558    0.8577      2441
+
+Ghi chú: Vì dữ liệu mất cân bằng, cần đọc thêm precision, recall và F1-score
+của lớp Purchase, không chỉ dựa vào accuracy.
