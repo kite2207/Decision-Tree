@@ -1,5 +1,3 @@
-KIỂM TRA DỮ LIỆU - NGƯỜI 2, NGÀY 1
-==================================================
 Tệp dữ liệu: online_shoppers_intention.csv
 Số dòng: 12,330
 Số cột: 18
