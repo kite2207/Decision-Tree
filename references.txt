@@ -1,0 +1,31 @@
+====================================================
+DANH SÁCH TÀI LIỆU THAM KHẢO - PERSON 3 - DAY 1
+====================================================
+
+[1] Sakar, C. O., Polat, S. O., Katircioglu, M., & Kastro, Y. (2019).
+    Real-time prediction of online shoppers' purchasing intention using
+    multilayer perceptron and LSTM recurrent neural networks.
+    Neural Computing and Applications, 31(10), 6893–6908.
+    DOI: https://doi.org/10.1007/s00521-018-3523-0
+    [Ghi chú: Đây là bài báo gốc mô tả dataset]
+
+[2] Géron, A. (2022).
+    Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow (3rd ed.).
+    O'Reilly Media.
+    Chương 6: Decision Trees – giải thích Gini, Entropy, CART algorithm, pruning.
+    ISBN: 978-1098125974
+
+[3] Scikit-learn Developers. (2024).
+    Decision Trees – scikit-learn User Guide.
+    URL: https://scikit-learn.org/stable/modules/tree.html
+    [Ghi chú: Tài liệu chính thức cho thư viện sẽ dùng trong code]
+
+[4] UCI Machine Learning Repository.
+    Online Shoppers Purchasing Intention Dataset.
+    URL: https://archive.ics.uci.edu/dataset/468/online+shoppers+purchasing+intention+dataset
+    [Ghi chú: Nguồn gốc chính thức của dataset]
+
+[5] Breiman, L., Friedman, J., Stone, C. J., & Olshen, R. A. (1984).
+    Classification and Regression Trees.
+    CRC Press.
+    [Ghi chú: Sách kinh điển về cây quyết định – thuật toán CART]
