@@ -1,47 +1,42 @@
 import csv
 from pathlib import Path
 
-import numpy as np
+import joblib
+import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.tree import DecisionTreeClassifier
 
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_FILE = BASE_DIR / "online_shoppers_preprocessed.csv"
+TRAIN_FILE = BASE_DIR / "online_shoppers_train.csv"
+TEST_FILE = BASE_DIR / "online_shoppers_test.csv"
+MODEL_FILE = BASE_DIR / "baseline_model.joblib"
 RESULT_FILE = BASE_DIR / "baseline_result.txt"
 CLASS_TABLE_FILE = BASE_DIR / "baseline_class_results.csv"
 PREDICTION_FILE = BASE_DIR / "baseline_predictions.csv"
 CONFUSION_IMAGE_FILE = BASE_DIR / "baseline_confusion_matrix.png"
-TARGET, SPLIT = "Revenue", "Split"
+TARGET = "Revenue"
 LABELS, DISPLAY_NAMES = [0, 1], ["No Purchase", "Purchase"]
 
 
-def load_processed_data():
-    def to_number(value):
-        if value == "True":
-            return 1.0
-        if value == "False":
-            return 0.0
-        return float(value)
+def load_baseline_data():
+    train_df = pd.read_csv(TRAIN_FILE)
+    test_df = pd.read_csv(TEST_FILE)
 
-    with INPUT_FILE.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        if not reader.fieldnames or not {TARGET, SPLIT}.issubset(reader.fieldnames):
-            raise ValueError("Dữ liệu phải có hai cột Revenue và Split.")
-        feature_columns = [c for c in reader.fieldnames if c not in {TARGET, SPLIT}]
-        train_x, train_y, test_x, test_y = [], [], [], []
-        for row in reader:
-            values = [to_number(row[column]) for column in feature_columns]
-            target = int(float(row[TARGET]))
-            if row[SPLIT] == "train":
-                train_x.append(values)
-                train_y.append(target)
-            elif row[SPLIT] == "test":
-                test_x.append(values)
-                test_y.append(target)
-    if not train_x or not test_x:
-        raise ValueError("Cột Split phải chứa cả 'train' và 'test'.")
-    return tuple(map(np.asarray, (train_x, train_y, test_x, test_y))) + (feature_columns,)
+    if TARGET not in train_df.columns or TARGET not in test_df.columns:
+        raise ValueError(f"Cả hai tập dữ liệu phải có cột {TARGET}.")
+
+    feature_columns = [column for column in train_df.columns if column != TARGET]
+    test_feature_columns = [column for column in test_df.columns if column != TARGET]
+    if feature_columns != test_feature_columns:
+        raise ValueError("Các đặc trưng của tập train và test không khớp nhau.")
+
+    return (
+        train_df[feature_columns],
+        train_df[TARGET].to_numpy(),
+        test_df[feature_columns],
+        test_df[TARGET].to_numpy(),
+        feature_columns,
+    )
 
 
 def save_class_table(rows):
@@ -88,9 +83,8 @@ def save_confusion_matrix_image(matrix):
 
 
 def main():
-    X_train, y_train, X_test, y_test, feature_columns = load_processed_data()
-    model = DecisionTreeClassifier(random_state=42)
-    model.fit(X_train, y_train)
+    X_train, y_train, X_test, y_test, feature_columns = load_baseline_data()
+    model = joblib.load(MODEL_FILE)
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     matrix = confusion_matrix(y_test, y_pred, labels=LABELS)
@@ -112,8 +106,9 @@ def main():
     correct_total = int((y_test == y_pred).sum())
     result = f"""KẾT QUẢ ĐÁNH GIÁ CÂY QUYẾT ĐỊNH BASELINE
 ============================================================
-Dữ liệu: {INPUT_FILE.name}
-Mô hình: DecisionTreeClassifier(random_state=42)
+Dữ liệu huấn luyện: {TRAIN_FILE.name}
+Dữ liệu kiểm tra: {TEST_FILE.name}
+Mô hình: {MODEL_FILE.name}
 Số mẫu huấn luyện: {len(y_train):,}
 Số mẫu kiểm tra: {len(y_test):,}
 Số đặc trưng: {len(feature_columns)}
