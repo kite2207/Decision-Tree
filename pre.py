@@ -1,4 +1,5 @@
 import pandas as pd
+
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -9,7 +10,9 @@ from sklearn.preprocessing import OneHotEncoder
 # ============================================================
 
 INPUT_FILE = "online_shoppers_intention.csv"
-OUTPUT_FILE = "online_shoppers_preprocessed.csv"
+
+TRAIN_FILE = "online_shoppers_train.csv"
+TEST_FILE = "online_shoppers_test.csv"
 
 
 # ============================================================
@@ -19,11 +22,11 @@ OUTPUT_FILE = "online_shoppers_preprocessed.csv"
 df = pd.read_csv(INPUT_FILE)
 
 print("=" * 70)
-print("1. ORIGINAL DATASET")
+print("1. LOAD DATA")
 print("=" * 70)
 
-print(f"Rows    : {df.shape[0]}")
-print(f"Columns : {df.shape[1]}")
+print(f"Original rows    : {df.shape[0]}")
+print(f"Original columns : {df.shape[1]}")
 
 
 # ============================================================
@@ -37,7 +40,13 @@ print("=" * 70)
 missing = df.isnull().sum()
 
 print(missing)
+
 print(f"\nTotal missing values: {missing.sum()}")
+
+if missing.sum() == 0:
+    print("No missing values found.")
+else:
+    print("Missing values found.")
 
 
 # ============================================================
@@ -45,12 +54,12 @@ print(f"\nTotal missing values: {missing.sum()}")
 # ============================================================
 
 print("\n" + "=" * 70)
-print("3. DUPLICATES")
+print("3. REMOVE DUPLICATES")
 print("=" * 70)
 
-duplicates = df.duplicated().sum()
+duplicate_count = df.duplicated().sum()
 
-print(f"Duplicate rows: {duplicates}")
+print(f"Duplicate rows: {duplicate_count}")
 
 df = df.drop_duplicates().reset_index(drop=True)
 
@@ -87,29 +96,34 @@ binary_features = [
     "Weekend"
 ]
 
-target = "Revenue"
+TARGET = "Revenue"
 
 
 # ============================================================
 # 5. SEPARATE X AND y
 # ============================================================
 
-X = df.drop(columns=[target])
-y = df[target].astype(int)
+X = df.drop(columns=[TARGET])
+
+# False -> 0
+# True  -> 1
+y = df[TARGET].astype(int)
 
 
 # ============================================================
-# 6. DISPLAY TARGET DISTRIBUTION
+# 6. CHECK TARGET DISTRIBUTION
 # ============================================================
 
 print("\n" + "=" * 70)
 print("4. TARGET DISTRIBUTION")
 print("=" * 70)
 
-counts = y.value_counts()
-percentages = y.value_counts(normalize=True) * 100
+target_counts = y.value_counts().sort_index()
+target_percent = y.value_counts(
+    normalize=True
+).sort_index() * 100
 
-for value in sorted(counts.index):
+for value in target_counts.index:
 
     if value == 0:
         label = "No Purchase"
@@ -118,14 +132,18 @@ for value in sorted(counts.index):
 
     print(
         f"{label:<15}: "
-        f"{counts[value]:>5} "
-        f"({percentages[value]:.2f}%)"
+        f"{target_counts[value]:>5} "
+        f"({target_percent[value]:.2f}%)"
     )
 
 
 # ============================================================
 # 7. TRAIN / TEST SPLIT
 # ============================================================
+
+print("\n" + "=" * 70)
+print("5. TRAIN / TEST SPLIT")
+print("=" * 70)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X,
@@ -135,10 +153,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
-print("\n" + "=" * 70)
-print("5. TRAIN / TEST SPLIT")
-print("=" * 70)
-
 print(f"Training samples: {len(X_train)}")
 print(f"Testing samples : {len(X_test)}")
 
@@ -146,6 +160,10 @@ print(f"Testing samples : {len(X_test)}")
 # ============================================================
 # 8. ONE-HOT ENCODING
 # ============================================================
+
+print("\n" + "=" * 70)
+print("6. ONE-HOT ENCODING")
+print("=" * 70)
 
 preprocessor = ColumnTransformer(
     transformers=[
@@ -163,8 +181,8 @@ preprocessor = ColumnTransformer(
 
 
 # IMPORTANT:
-# Fit encoder ONLY using training data.
-# Then use the same encoder for test data.
+# Fit encoder ONLY on training data.
+# Test data uses the same encoder.
 
 X_train_processed = preprocessor.fit_transform(X_train)
 
@@ -172,10 +190,13 @@ X_test_processed = preprocessor.transform(X_test)
 
 
 # ============================================================
-# 9. GET FEATURE NAMES
+# 9. FEATURE NAMES
 # ============================================================
 
 feature_names = preprocessor.get_feature_names_out()
+
+print(f"Original features : {X.shape[1]}")
+print(f"Processed features: {len(feature_names)}")
 
 
 # ============================================================
@@ -205,92 +226,55 @@ X_test_processed["Revenue"] = y_test
 
 
 # ============================================================
-# 12. ADD TRAIN / TEST LABEL
+# 12. SAVE TRAIN / TEST CSV
 # ============================================================
 
-X_train_processed["Split"] = "train"
-X_test_processed["Split"] = "test"
-
-
-# ============================================================
-# 13. COMBINE TRAIN + TEST
-# ============================================================
-
-processed_data = pd.concat(
-    [
-        X_train_processed,
-        X_test_processed
-    ],
-    ignore_index=True
+X_train_processed.to_csv(
+    TRAIN_FILE,
+    index=False
 )
 
-
-# Put Split and Revenue at the end
-
-feature_columns = [
-    column
-    for column in processed_data.columns
-    if column not in ["Split", "Revenue"]
-]
-
-processed_data = processed_data[
-    feature_columns + ["Split", "Revenue"]
-]
-
-
-# ============================================================
-# 14. SAVE CSV
-# ============================================================
-
-processed_data.to_csv(
-    OUTPUT_FILE,
+X_test_processed.to_csv(
+    TEST_FILE,
     index=False
 )
 
 
 # ============================================================
-# 15. FINAL OUTPUT
+# 13. VALIDATE OUTPUT
 # ============================================================
 
 print("\n" + "=" * 70)
-print("6. PREPROCESSING RESULT")
+print("7. OUTPUT FILES")
 print("=" * 70)
 
-print(f"Original records       : {df.shape[0] + duplicates}")
-print(f"Duplicates removed     : {duplicates}")
-print(f"Final records          : {df.shape[0]}")
+print(f"Train file: {TRAIN_FILE}")
+print(f"Test file : {TEST_FILE}")
 
-print(f"\nOriginal features      : {X.shape[1]}")
-print(f"Processed features     : {len(feature_names)}")
-
-print(f"\nTraining samples       : {len(X_train_processed)}")
-print(f"Testing samples        : {len(X_test_processed)}")
-
-print(f"\nOutput file            : {OUTPUT_FILE}")
-print(f"Output shape           : {processed_data.shape}")
+print(f"\nTrain shape: {X_train_processed.shape}")
+print(f"Test shape : {X_test_processed.shape}")
 
 
 # ============================================================
-# 16. VALIDATION
+# 14. FINAL SUMMARY
 # ============================================================
 
 print("\n" + "=" * 70)
-print("7. VALIDATION")
+print("PREPROCESSING COMPLETED")
 print("=" * 70)
 
-print(
-    "Missing values:",
-    processed_data.isnull().sum().sum()
-)
+print(f"Original dataset : 12330 rows")
+print(f"Duplicates       : {duplicate_count}")
+print(f"Final dataset    : {len(df)} rows")
 
-print(
-    "Train rows:",
-    (processed_data["Split"] == "train").sum()
-)
+print(f"\nOriginal features: {X.shape[1]}")
+print(f"Encoded features : {len(feature_names)}")
 
-print(
-    "Test rows:",
-    (processed_data["Split"] == "test").sum()
-)
+print(f"\nTrain samples    : {len(X_train_processed)}")
+print(f"Test samples     : {len(X_test_processed)}")
+
+print("\nGenerated files:")
+print(f"  - {TRAIN_FILE}")
+print(f"  - {TEST_FILE}")
 
 print("\nPreprocessing completed successfully.")
