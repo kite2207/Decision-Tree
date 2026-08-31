@@ -1,0 +1,99 @@
+======================================================================
+IMPROVEMENT 3: GINI vs ENTROPY - COMPARISON RESULTS
+======================================================================
+
+Dataset : online_shoppers_intention (preprocessed)
+Train   : 9764 samples
+Test    : 2441 samples
+Features: 73
+
+--- COMPARISON TABLE ---
+
+Criterion     Train Acc   Test Acc    Error  Precision   Recall       F1   Depth   Leaves   Nodes
+-------------------------------------------------------------------------------------------------
+gini             1.0000     0.8558   0.1442     0.5368   0.5733   0.5544      26      814    1627
+entropy          1.0000     0.8615   0.1385     0.5539   0.5916   0.5722      30      763    1525
+
+Accuracy difference (Entropy - Gini) : +0.0057
+F1-score difference (Entropy - Gini) : +0.0177
+
+Best criterion (by F1-score) : ENTROPY
+
+======================================================================
+DETAIL: GINI
+======================================================================
+
+Training Accuracy : 1.0000
+Testing Accuracy  : 0.8558
+Error Rate        : 0.1442
+Precision         : 0.5368
+Recall            : 0.5733
+F1-score          : 0.5544
+Tree depth        : 26
+Leaf nodes        : 814
+Total nodes       : 1627
+
+Confusion Matrix:
+                 Predicted No    Predicted Yes
+Actual No                1870           189
+Actual Yes                163           219
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ No Purchase       0.92      0.91      0.91      2059
+    Purchase       0.54      0.57      0.55       382
+
+    accuracy                           0.86      2441
+   macro avg       0.73      0.74      0.73      2441
+weighted avg       0.86      0.86      0.86      2441
+
+======================================================================
+DETAIL: ENTROPY
+======================================================================
+
+Training Accuracy : 1.0000
+Testing Accuracy  : 0.8615
+Error Rate        : 0.1385
+Precision         : 0.5539
+Recall            : 0.5916
+F1-score          : 0.5722
+Tree depth        : 30
+Leaf nodes        : 763
+Total nodes       : 1525
+
+Confusion Matrix:
+                 Predicted No    Predicted Yes
+Actual No                1877           182
+Actual Yes                156           226
+
+Classification Report:
+              precision    recall  f1-score   support
+
+ No Purchase       0.92      0.91      0.92      2059
+    Purchase       0.55      0.59      0.57       382
+
+    accuracy                           0.86      2441
+   macro avg       0.74      0.75      0.74      2441
+weighted avg       0.87      0.86      0.86      2441
+
+======================================================================
+ANALYSIS
+======================================================================
+
+1. Gini Impurity:
+   - Measures how often a randomly chosen element would be
+     incorrectly classified.
+   - Computationally faster (no log computation).
+   - Tends to produce slightly larger/deeper trees.
+
+2. Entropy (Information Gain):
+   - Measures information gained by a split.
+   - Slightly slower due to log computation.
+   - May produce more balanced splits on some datasets.
+
+3. Conclusion:
+   Entropy outperforms Gini on this dataset.
+   Accuracy gain: 0.57%, F1 gain: 1.77%.
+   The information gain criterion finds better splits
+   for this imbalanced classification problem.
