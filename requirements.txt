@@ -5,3 +5,4 @@ matplotlib==3.9.2
 seaborn==0.13.2
 Pillow==11.1.0
 joblib
+pathlib

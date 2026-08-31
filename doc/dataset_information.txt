@@ -1,0 +1,13 @@
+1. Xác định dữ liệu
+Mục tiêu dự đoán: Dự đoán một phiên truy cập website có phát sinh mua hàng hay không.
+Cột kết quả cần dự đoán: Revenue
+0 (False): Không mua hàng.
+1 (True): Có mua hàng.
+Các cột còn lại: 17 cột mô tả hành vi và đặc điểm của phiên truy cập, gồm:
+Thông tin trang đã truy cập: Administrative, Informational, ProductRelated và thời gian tương ứng.
+Hành vi truy cập: BounceRates, ExitRates, PageValues, SpecialDay.
+Thông tin phiên: Month, OperatingSystems, Browser, Region, TrafficType, VisitorType, Weekend.
+Kích thước dữ liệu: 12.330 dòng, 18 cột.
+2. Kiểm tra dữ liệu trống
+Bộ dữ liệu không có ô bị trống (missing values).
+Tổng số giá trị thiếu: 0.
