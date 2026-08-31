@@ -1,0 +1,52 @@
+{
+  "sklearn_version": "1.6.1",
+  "random_state": 42,
+  "train_samples": 9764,
+  "test_samples": 2441,
+  "features": 73,
+  "cv_folds": 5,
+  "selection_metric": "accuracy",
+  "positive_class": 1,
+  "grids": {
+    "max_depth": {
+      "max_depth": [
+        3,
+        5,
+        7,
+        10,
+        15,
+        20,
+        null
+      ]
+    },
+    "min_samples_leaf": {
+      "min_samples_leaf": [
+        1,
+        2,
+        5,
+        10,
+        20,
+        50,
+        100
+      ]
+    },
+    "criterion": {
+      "criterion": [
+        "gini",
+        "entropy"
+      ]
+    }
+  },
+  "best_parameters": {
+    "max_depth": {
+      "max_depth": 5
+    },
+    "min_samples_leaf": {
+      "min_samples_leaf": 50
+    },
+    "criterion": {
+      "criterion": "entropy"
+    }
+  },
+  "selected_by_cv": "min_samples_leaf"
+}
