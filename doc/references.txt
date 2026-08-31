@@ -1,7 +1,3 @@
-====================================================
-DANH SÁCH TÀI LIỆU THAM KHẢO - PERSON 3 - DAY 1
-====================================================
-
 [1] Sakar, C. O., Polat, S. O., Katircioglu, M., & Kastro, Y. (2019).
     Real-time prediction of online shoppers' purchasing intention using
     multilayer perceptron and LSTM recurrent neural networks.
