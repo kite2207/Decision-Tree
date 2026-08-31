@@ -335,29 +335,78 @@ Sau bước tiền xử lý, dữ liệu đã ở dạng phù hợp để tiến
 
 ## f. Các phương pháp cải thiện (Improvement Methods)
 
+### Thiết lập thí nghiệm cải thiện cây
+
+Sử dụng nguyên tập train (9.764 mẫu), test (2.441 mẫu) và 73 đặc trưng đã
+tiền xử lý. Mỗi thí nghiệm chỉ thay đổi một tham số, các tham số khác giữ
+như baseline (`criterion="gini"`, `random_state=42`). Dùng StratifiedKFold
+5 folds, shuffle=True, random_state=42 trên train; chọn cấu hình theo accuracy
+trung bình validation. Sau đó huấn luyện lại trên toàn bộ train và đánh giá test.
+Không dùng test để chọn tham số. Precision, recall, F1 bên dưới dành cho lớp
+Purchase (`Revenue=1`), nhằm bổ sung góc nhìn cho dữ liệu mất cân bằng.
+
+Baseline được huấn luyện lại với cấu hình gốc, cho accuracy test 85,58%,
+khớp kết quả ngày 2; không ghi đè mô hình baseline cũ.
+
 ### Cải thiện 1: Giới hạn độ sâu cây (max_depth)
 
-[Người 2 - Ngày 3]
-
-- **Mô tả phương pháp:** ...
-- **Kết quả:** ...
-- **Giải thích:** ...
+- **Mô tả phương pháp:** Thử `max_depth ∈ {3, 5, 7, 10, 15, 20, None}`.
+  Hạn chế độ sâu để giảm các nhánh quá chi tiết. CV chọn `max_depth=5`,
+  accuracy validation trung bình 89,86%.
+- **Kết quả:** Accuracy train 90,99%, test 90,21%; error rate 9,79%;
+  precision 70,61%, recall 64,14%, F1 67,22%. Cây sâu 5, có 32 lá và 63 nút.
+- **Giải thích:** Accuracy test tăng 4,63 điểm phần trăm so với baseline,
+  trong khi chênh lệch train–test giảm từ 14,42 xuống 0,78 điểm phần trăm.
+  Kết quả phù hợp với việc giảm overfitting; cây cũng dễ diễn giải hơn.
 
 ### Cải thiện 2: Giới hạn số mẫu tối thiểu tại lá (min_samples_leaf)
 
-[Người 2 - Ngày 3]
+- **Mô tả phương pháp:** Thử `min_samples_leaf ∈ {1, 2, 5, 10, 20, 50, 100}`.
+  Mỗi lá phải chứa ít nhất số mẫu chỉ định, hạn chế quyết định dựa trên
+  những nhóm quá nhỏ. CV chọn `min_samples_leaf=50`, accuracy trung bình 90,15%.
+- **Kết quả:** Accuracy train 90,96%, test 90,00%; error rate 10,00%;
+  precision 71,97%, recall 59,16%, F1 64,94%. Cây sâu 14, có 90 lá và 179 nút.
+- **Giải thích:** Accuracy test tăng 4,42 điểm phần trăm so với baseline.
+  So với giới hạn độ sâu, precision cao hơn nhưng recall thấp hơn: mô hình
+  báo nhầm mua hàng ít hơn (88 so với 102), nhưng bỏ sót nhiều hơn (156 so với 137).
 
-- **Mô tả phương pháp:** ...
-- **Kết quả:** ...
-- **Giải thích:** ...
+### Cải thiện 3: So sánh tiêu chí phân chia Gini và Entropy
 
-### Cải thiện 3: So sánh tiêu chí phân chia (Gini vs. Entropy) hoặc Pruning
+- **Mô tả phương pháp:** So sánh `criterion="gini"` và `criterion="entropy"`
+  với cây không giới hạn độ sâu, `min_samples_leaf=1`. Chỉ thay tiêu chí
+  phân chia để tách biệt ảnh hưởng với hai thí nghiệm trên; không thực hiện
+  thêm pruning vì kế hoạch cho phép chọn một trong hai phương án.
+- **Kết quả:** Accuracy CV của Gini là 85,94%, Entropy là 86,53%, nên chọn
+  Entropy. Accuracy train 100%, test 86,15%; error rate 13,85%; precision
+  55,39%, recall 59,16%, F1 57,22%. Cây sâu 30, có 763 lá và 1.525 nút
+  (Gini: sâu 26, 814 lá, 1.627 nút).
+- **Giải thích:** Entropy tăng accuracy test 0,57 điểm phần trăm nhưng
+  chênh lệch train–test vẫn lớn (13,85 điểm phần trăm). Đổi tiêu chí phân
+  chia riêng lẻ chưa khắc phục tốt overfitting trong thí nghiệm này.
 
-[Người 3 - Ngày 3]
+### Tổng hợp thí nghiệm cải thiện cây
 
-- **Mô tả phương pháp:** ...
-- **Kết quả:** ...
-- **Giải thích:** ...
+| Cấu hình | Accuracy CV | Accuracy test | Error rate | F1 Purchase | Độ sâu | Số lá |
+|---|---:|---:|---:|---:|---:|---:|
+| Baseline Gini | 85,94% | 85,58% | 14,42% | 55,44% | 26 | 814 |
+| max_depth=5 | 89,86% | 90,21% | 9,79% | 67,22% | 5 | 32 |
+| min_samples_leaf=50 | 90,15% | 90,00% | 10,00% | 64,94% | 14 | 90 |
+| Entropy | 86,53% | 86,15% | 13,85% | 57,22% | 30 | 763 |
+
+Độ sâu được tính theo số cạnh từ gốc tới lá sâu nhất (`get_depth()`), không
+phải số tầng; số tầng bằng độ sâu + 1.
+
+Theo tiêu chí chọn đã định trước, `min_samples_leaf=50` là cấu hình được
+chọn bằng CV. `max_depth=5` có accuracy và F1 test cao nhất trong lần đánh giá
+này, nhưng không dùng kết quả test để thay đổi lựa chọn. Chênh lệch nhỏ giữa
+hai cấu hình không chứng minh ưu thế có ý nghĩa thống kê. Chưa thử kết hợp
+các tham số. Encoder của dữ liệu có sẵn được fit trên toàn bộ train trước
+CV; CV ở đây đánh giá mô hình trên đặc trưng đã mã hóa, không phải toàn bộ
+pipeline tiền xử lý. Test không tham gia fit encoder.
+
+Mã chạy: `python src/improvements/tree_experiments.py` từ thư mục dự án.
+Chi tiết tái lập và danh sách đầu ra nằm trong `doc/improvements_readme.md`.
+Phần g và h vẫn dành cho tổng hợp ngày 4.
 
 ---
 

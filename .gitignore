@@ -2,3 +2,5 @@
 lab2.md
 plan.md
 draft.txt
+__pycache__/
+*.py[cod]
