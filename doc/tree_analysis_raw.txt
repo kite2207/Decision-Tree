@@ -1,0 +1,54 @@
+======================================================================
+BASELINE DECISION TREE - STRUCTURAL ANALYSIS
+======================================================================
+
+--- TREE SIZE ---
+Max depth        : 26
+Total nodes      : 1627
+Leaf nodes       : 814
+Internal nodes   : 813
+
+--- ROOT NODE ---
+Split feature    : remainder__PageValues
+Split threshold  : 0.944819
+  Left  branch   : remainder__PageValues <= 0.9448
+  Right branch   : remainder__PageValues  > 0.9448
+
+--- TOP 10 MOST IMPORTANT FEATURES ---
+   1. remainder__PageValues               0.420047
+   2. remainder__ProductRelated_Duration  0.086323
+   3. remainder__BounceRates              0.068091
+   4. remainder__ExitRates                0.063318
+   5. remainder__Administrative_Duration  0.048294
+   6. remainder__Administrative           0.043744
+   7. remainder__ProductRelated           0.040325
+   8. categorical__Month_Nov              0.024776
+   9. remainder__Informational_Duration   0.022700
+  10. remainder__Informational            0.013136
+
+Total features used in splits: 61
+Total features available     : 73
+
+--- PATH TRACING ---
+
+Path 1: Go LEFT at root (condition TRUE -> smaller/equal threshold)
+Node 0: remainder__PageValues <= 0.9448
+  Node 1: categorical__Month_Nov <= 0.5000
+    Node 2: remainder__Administrative_Duration <= 1.0000
+      Node 3: remainder__PageValues <= 0.0696
+        Node 4: categorical__Month_Dec <= 0.5000
+          Node 5: remainder__Informational <= 4.5000
+            Node 6: categorical__TrafficType_20 <= 0.5000
+              Node 7: categorical__Month_Aug <= 0.5000
+                -> LEAF Node 8: predict 'No Purchase' (No Purchase=1, Purchase=0, n=1)
+
+Path 2: Go RIGHT at root (condition FALSE -> greater than threshold)
+Node 0: remainder__PageValues  > 0.9448
+  Node 822: remainder__BounceRates <= 0.0004
+    Node 823: remainder__PageValues <= 14.7979
+      Node 824: remainder__Administrative <= 4.5000
+        Node 825: remainder__ProductRelated_Duration <= 3100.0060
+          Node 826: remainder__ExitRates <= 0.0408
+            Node 827: categorical__VisitorType_Returning_Visitor <= 0.5000
+              Node 828: remainder__ProductRelated_Duration <= 2403.7333
+                -> LEAF Node 829: predict 'Purchase' (No Purchase=0, Purchase=1, n=1)
