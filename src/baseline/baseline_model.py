@@ -1,5 +1,7 @@
 import pandas as pd
 import joblib
+from pathlib import Path
+
 
 from sklearn.tree import DecisionTreeClassifier
 
@@ -8,11 +10,13 @@ from sklearn.tree import DecisionTreeClassifier
 # CONFIG
 # ============================================================
 
-TRAIN_FILE = "online_shoppers_train.csv"
-TEST_FILE = "online_shoppers_test.csv"
+BASE_DIR = Path(__file__).resolve().parents[2]
 
-MODEL_FILE = "baseline_model.joblib"
-OUTPUT_FILE = "online_shoppers_baseline_predictions.csv"
+TRAIN_FILE = BASE_DIR / "dataset/online_shoppers_train.csv"
+TEST_FILE = BASE_DIR / "dataset/online_shoppers_test.csv"
+
+MODEL_FILE = BASE_DIR / "model/baseline_model.joblib"
+OUTPUT_FILE = BASE_DIR / "dataset/online_shoppers_baseline_predictions.csv"
 
 TARGET = "Revenue"
 
