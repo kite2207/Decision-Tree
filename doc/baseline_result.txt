@@ -1,7 +1,8 @@
 KẾT QUẢ ĐÁNH GIÁ CÂY QUYẾT ĐỊNH BASELINE
 ============================================================
-Dữ liệu: online_shoppers_preprocessed.csv
-Mô hình: DecisionTreeClassifier(random_state=42)
+Dữ liệu huấn luyện: online_shoppers_train.csv
+Dữ liệu kiểm tra: online_shoppers_test.csv
+Mô hình: baseline_model.joblib
 Số mẫu huấn luyện: 9,764
 Số mẫu kiểm tra: 2,441
 Số đặc trưng: 73
