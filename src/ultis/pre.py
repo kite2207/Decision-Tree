@@ -1,5 +1,6 @@
 import pandas as pd
 
+from pathlib import Path
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -8,11 +9,12 @@ from sklearn.preprocessing import OneHotEncoder
 # ============================================================
 # CONFIG
 # ============================================================
+BASE_DIR = Path(__file__).resolve().parents[2]
 
-INPUT_FILE = "online_shoppers_intention.csv"
+INPUT_FILE = BASE_DIR / "dataset/online_shoppers_intention.csv"
 
-TRAIN_FILE = "online_shoppers_train.csv"
-TEST_FILE = "online_shoppers_test.csv"
+TRAIN_FILE = BASE_DIR / "dataset/online_shoppers_train.csv"
+TEST_FILE = BASE_DIR / "dataset/online_shoppers_test.csv"
 
 
 # ============================================================

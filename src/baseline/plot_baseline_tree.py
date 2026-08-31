@@ -1,6 +1,7 @@
 import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 from sklearn.tree import plot_tree
 
@@ -9,10 +10,12 @@ from sklearn.tree import plot_tree
 # CONFIG
 # ============================================================
 
-MODEL_FILE = "baseline_model.joblib"
-TRAIN_FILE = "online_shoppers_train.csv"
+BASE_DIR = Path(__file__).resolve().parents[2]
 
-OUTPUT_IMAGE = "baseline_decision_tree_top3.png"
+MODEL_FILE = BASE_DIR / "model/baseline_model.joblib"
+TRAIN_FILE = BASE_DIR / "dataset/online_shoppers_train.csv"
+
+OUTPUT_IMAGE = BASE_DIR / "img/baseline_decision_tree_top3.png"
 
 TARGET = "Revenue"
 
