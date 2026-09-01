@@ -1,5 +1,3 @@
-"""Run Decision tree improvement experiments: python src/improvements/tree_experiments.py."""
-
 import json
 from pathlib import Path
 
@@ -13,7 +11,7 @@ import sklearn
 from sklearn.metrics import (
     accuracy_score, confusion_matrix, f1_score, precision_score, recall_score,
 )
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -21,7 +19,6 @@ TARGET = "Revenue"
 GRIDS = {
     "max_depth": {"max_depth": [3, 5, 7, 10, 15, 20, None]},
     "min_samples_leaf": {"min_samples_leaf": [1, 2, 5, 10, 20, 50, 100]},
-    "criterion": {"criterion": ["gini", "entropy"]},
 }
 
 
@@ -40,7 +37,6 @@ def load_data():
             raise ValueError("Revenue must contain binary labels 0 and 1.")
     return train[features], train[TARGET], test[features], test[TARGET]
 
-
 def evaluate(model, X_train, y_train, X_test, y_test):
     predicted = model.predict(X_test)
     tn, fp, fn, tp = confusion_matrix(y_test, predicted, labels=[0, 1]).ravel()
@@ -56,7 +52,6 @@ def evaluate(model, X_train, y_train, X_test, y_test):
         "nodes": model.tree_.node_count,
         "tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp),
     }, predicted
-
 
 def main():
     X_train, y_train, X_test, y_test = load_data()
@@ -82,16 +77,17 @@ def main():
     # the original configuration, without overwriting the existing artifact.
     models = {"baseline": DecisionTreeClassifier(random_state=42).fit(X_train, y_train)}
     models.update({name: search.best_estimator_ for name, search in searches.items()})
+    baseline_cv_accuracy = cross_val_score(
+        DecisionTreeClassifier(random_state=42), X_train, y_train,
+        scoring="accuracy", cv=cv, n_jobs=1,
+    ).mean()
     rows = []
     predictions = pd.DataFrame({"actual": y_test})
     for name, model in models.items():
         metrics, predicted = evaluate(model, X_train, y_train, X_test, y_test)
         params = searches[name].best_params_ if name in searches else {"criterion": "gini"}
-        # Gini with default settings is exactly the baseline candidate.
-        baseline_search = searches["criterion"]
-        baseline_index = baseline_search.cv_results_["params"].index({"criterion": "gini"})
         cv_accuracy = (searches[name].best_score_ if name in searches else
-                       baseline_search.cv_results_["mean_test_accuracy"][baseline_index])
+                       baseline_cv_accuracy)
         rows.append({"model": name, "parameters": json.dumps(params),
                      "cv_accuracy": cv_accuracy, **metrics})
         predictions[name] = predicted

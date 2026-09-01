@@ -29,12 +29,6 @@
         50,
         100
       ]
-    },
-    "criterion": {
-      "criterion": [
-        "gini",
-        "entropy"
-      ]
     }
   },
   "best_parameters": {
@@ -43,9 +37,6 @@
     },
     "min_samples_leaf": {
       "min_samples_leaf": 50
-    },
-    "criterion": {
-      "criterion": "entropy"
     }
   },
   "selected_by_cv": "min_samples_leaf"
