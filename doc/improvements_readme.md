@@ -1,7 +1,7 @@
 # Thí nghiệm cải thiện cây quyết định
 
-Đã hoàn thành ba thí nghiệm trong phần f của `report_template.md`:
-giới hạn độ sâu, giới hạn số mẫu tại lá, so sánh Gini/Entropy.
+Đã hoàn thành hai thí nghiệm của Người 2 trong phần f của `report_template.md`:
+giới hạn độ sâu và giới hạn số mẫu tại lá.
 
 ## Chạy lại
 
@@ -19,13 +19,13 @@ Chạy lại sẽ ghi đè các đầu ra có tiền tố `improvements_`.
 
 ## Đầu ra
 
-- `dataset/improvements_cv_max_depth.csv`, `improvements_cv_min_samples_leaf.csv`,
-  `improvements_cv_criterion.csv`: điểm train/validation của từng fold, từng ứng viên.
+- `dataset/improvements_cv_max_depth.csv` và `improvements_cv_min_samples_leaf.csv`:
+  điểm train/validation của từng fold, từng ứng viên.
 - `dataset/improvements_results.csv`: tham số được chọn, accuracy CV, các chỉ số
   train/test, độ phức tạp cây và confusion matrix (TN, FP, FN, TP).
-- `dataset/improvements_predictions.csv`: nhãn thực tế và dự đoán của bốn mô hình;
+- `dataset/improvements_predictions.csv`: nhãn thực tế và dự đoán của ba mô hình;
   thứ tự hàng giống tập test.
-- `model/improvements_*.joblib`: baseline huấn luyện lại và ba mô hình sau lựa chọn.
+- `model/improvements_*.joblib`: baseline huấn luyện lại và hai mô hình cải thiện.
 - `doc/improvements_run.json`: cấu hình, kích thước dữ liệu, phiên bản scikit-learn.
 - `img/improvements_comparison.png`: so sánh chất lượng và độ phức tạp cây.
 - `doc/report_template.md`, phần f: phương pháp, kết quả và nhận xét tiếng Việt.
