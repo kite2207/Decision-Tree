@@ -116,9 +116,8 @@ Day la hanh vi cua mot nguoi dung co muc dich ro rang — ho xem nhieu trang co 
 ### Huong cai thien
 - **Gioi han chieu sau** (`max_depth`): Giam overfitting, don gian hoa cay.
 - **Tang min_samples_leaf**: Tranh cac la co it mau (tien hanh boi Nguoi 2).
-- **Thay doi tieu chi chia** (Gini vs Entropy): Kiem tra xem tieu chi nao phu hop hon (tien hanh boi Nguoi 3 — xem ket qua improvement3_result.txt).
+- **Thay doi tieu chi chia** (Gini vs Entropy): Duoc danh gia trong pipeline chung tai `src/improvements/tree_experiments.py`.
 
 ---
 
-*File nay duoc tao tu: `src/person3/analyze_tree.py`*
 *Du lieu tham khao: `doc/baseline_result.txt`, `doc/tree_analysis_raw.txt`*

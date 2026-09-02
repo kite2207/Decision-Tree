@@ -19,8 +19,7 @@ TARGET = "Revenue"
 GRIDS = {
     "max_depth": {"max_depth": [3, 5, 7, 10, 15, 20, None]},
     "min_samples_leaf": {"min_samples_leaf": [1, 2, 5, 10, 20, 50, 100]},
-    # Merged from src/person3/improvement3.py.  Keeping the comparison in the
-    # shared CV pipeline prevents choosing a criterion on the held-out test set.
+    # Select the splitting criterion by CV instead of using the held-out test set.
     "criterion": {"criterion": ["gini", "entropy"]},
 }
 
